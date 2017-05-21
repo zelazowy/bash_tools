@@ -1,0 +1,9 @@
+i=1
+n=$(ls -1q *.mp4 | wc -l)
+for video in ./*.mp4;
+do
+	echo "$i/$n";
+	ffmpeg -i $video -vf "transpose=2" -strict -2 ./test/$video;
+	let "i++";	
+done
+
