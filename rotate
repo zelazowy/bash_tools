@@ -1,9 +1,35 @@
+#!/bin/bash
+# see http://stackoverflow.com/questions/3937387/rotating-videos-with-ffmpeg
+
+input_dir=$(realpath $1)
+output_dir=$(realpath $2)
+rotation=$3
+
+# choose right transpose mode depending on desired rotation
+if [ $rotation == 90 ];
+then
+	param='transpose=1'
+elif [ $rotation == 180 ];
+then
+	param='transpose=2,transpose=2'
+elif [ $rotation == 270 ];
+then
+	param='transpose=2'
+else
+	echo "wrong rotation parameter (allowed values: 90, 180, 270)"
+	exit 1
+fi
+
 i=1
-n=$(ls -1q *.mp4 | wc -l)
-for video in ./*.mp4;
+# count mp4 files in directory
+n=$(ls -1q "$input_dir"/*.mp4 | wc -l)
+for video in "$input_dir"/*.mp4;
 do
-	echo "$i/$n";
-	ffmpeg -i $video -vf "transpose=2" -strict -2 ./test/$video;
+
+	filename=$(basename "$video")
+
+	echo "$i/$n"
+	ffmpeg -i "$video" -vf "$param" -strict -2 "$output_dir/$filename"
 	let "i++";	
 done
 
